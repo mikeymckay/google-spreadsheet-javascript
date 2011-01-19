@@ -1,0 +1,27 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+    <title>Google Spreadsheet Javascript</title> 
+    <script type="text/javascript" src="jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="models.js"></script>
+  </head> 
+  <body> 
+    Here is the most basic usage:
+    <pre id='code'></pre>
+    And here are the results:
+    <pre id='results'></pre>
+    <script id='script'>
+      localStorage.clear();
+      var url = "https://spreadsheets.google.com/pub?key=0Ago31JQPZxZrdHF2bWNjcTJFLXJ6UUM5SldEakdEaXc&hl=en&output=html";
+      var googleSpreadsheet = new GoogleSpreadsheet();
+      googleSpreadsheet.url(url);
+      googleSpreadsheet.load(function(result) {
+        $('#results').html(JSON.stringify(result).replace(/,/g,",\n"));
+      });
+    </script>
+    <script>
+      $('#code').html($('#script').html())
+    </script>
+  </body>
+</html>
+
