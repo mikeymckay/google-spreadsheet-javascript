@@ -1,4 +1,6 @@
-var GoogleSpreadsheet, GoogleUrl;
+/*
+Updated versions can be found at https://github.com/mikeymckay/google-spreadsheet-javascript
+*/var GoogleSpreadsheet, GoogleUrl;
 GoogleUrl = function() {
   function GoogleUrl(sourceIdentifier) {
     this.sourceIdentifier = sourceIdentifier;

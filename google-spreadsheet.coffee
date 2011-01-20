@@ -1,3 +1,10 @@
+
+###
+Updated versions can be found at https://github.com/mikeymckay/google-spreadsheet-javascript
+###
+
+
+
 class GoogleUrl
   constructor: (@sourceIdentifier) ->
     if (@sourceIdentifier.match(/http(s)*:/))
@@ -51,7 +58,7 @@ GoogleSpreadsheet.find = (params) ->
           if itemObject[key] == value
             return GoogleSpreadsheet.bless(itemObject)
 # Need this to handle differences in localStorage between chrome and firefox TODO make dry
-  catch error 
+  catch error
     for item in localStorage
       if item.match(/^GoogleSpreadsheet\./)
         itemObject = JSON.parse(localStorage[item])
