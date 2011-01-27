@@ -4,15 +4,42 @@
     <title>Google Spreadsheet Javascript</title> 
     <script type="text/javascript" src="jquery-1.4.4.min.js"></script>
     <script type="text/javascript" src="google-spreadsheet.js"></script>
+    <style>
+      body{
+        background-color: black;
+        color: green;
+        font-size: .8em;
+        font-family: sans-serif;
+      }
+      h1,a{ color: yellow}
+      input{
+        font-size: .8em;
+        background-color: black;
+        color:white;
+      }
+    </style>
   </head> 
   <body> 
+    <h1>Google Spreadsheet Javascript</h1>
     Here is the most basic usage:
     <pre id='code'></pre>
     And here are the results:
     <pre id='results'></pre>
+    <div id='links'>
+      Github URL: <a href='https://github.com/mikeymckay/google-spreadsheet-javascript'>https://github.com/mikeymckay/google-spreadsheet-javascript</a><br/>
+      Source URL for above spreadsheet data: <span id='spreadsheet_url'></span><br/>
+      Try your own spreadsheet (needs to be <a href='https://docs.google.com/support/bin/answer.py?hl=en&answer=47134'>published</a>):<br/>
+      <input style='width:700px' name='url' type='text'></input>
+      <input onclick='document.location = document.location.pathname + "?url="+$("input[name]").val()' type='submit'></input>
+    </div>
+    <iframe width='500' height='300' frameborder='0' ></iframe>
+    <script>
+    </script>
     <script id='script'>
       localStorage.clear();
-      var url = "https://spreadsheets.google.com/pub?key=0Ago31JQPZxZrdHF2bWNjcTJFLXJ6UUM5SldEakdEaXc&hl=en&output=html";
+      var sample_url = "https://spreadsheets.google.com/pub?key=0Ago31JQPZxZrdHF2bWNjcTJFLXJ6UUM5SldEakdEaXc&hl=en&output=html";
+      var url_parameter = document.location.search.split(/\?url=/)[1]
+      var url = url_parameter || sample_url;
       var googleSpreadsheet = new GoogleSpreadsheet();
       googleSpreadsheet.url(url);
       googleSpreadsheet.load(function(result) {
@@ -21,6 +48,12 @@
     </script>
     <script>
       $('#code').html($('#script').html())
+      $('#spreadsheet_url').html("<a href='"+url+"'>"+url+"</a>");
+      $('#iframe').attr("src",url);
+      $('input[name]').val(url);
+      if (url != sample_url){
+        $("div#links").append("<br/><a href='"+document.location.pathname+"'>Original Sample Spreadsheet</a>")
+      }
     </script>
   </body>
 </html>
