@@ -14,7 +14,7 @@ $(document).ready(function() {
     var expectedJsonUrl, expectedKey, googleUrl;
     expect(2);
     expectedKey = "0Ago31JQPZxZrdHF2bWNjcTJFLXJ6UUM5SldEakdEaXc";
-    expectedJsonUrl = "http://spreadsheets.google.com/feeds/list/" + expectedKey + "/od6/public/basic?alt=json-in-script";
+    expectedJsonUrl = "http://spreadsheets.google.com/feeds/cells/" + expectedKey + "/od6/public/basic?alt=json-in-script";
     googleUrl = new GoogleUrl(url);
     equals(googleUrl.key, expectedKey);
     return equals(googleUrl.jsonUrl, expectedJsonUrl);
@@ -30,17 +30,7 @@ $(document).ready(function() {
     });
     return equals(JSON.stringify(result), JSON.stringify(googleSpreadsheet));
   });
-  test("Parsing", function() {
-    expect(1);
-    stop();
-    return jQuery.getJSON("testsCallbackData.json", function(data) {
-      var result;
-      result = GoogleSpreadsheet.callback(data);
-      equals(result.data.length, 10);
-      return start();
-    });
-  });
-  return test("Load and parse", function() {
+  test("Load and parse", function() {
     var googleSpreadsheet;
     expect(1);
     localStorage.clear();
@@ -49,12 +39,23 @@ $(document).ready(function() {
     googleSpreadsheet.type = "test";
     googleSpreadsheet.save();
     stop();
-    return googleSpreadsheet.load(function() {
-      var result;
-      result = GoogleSpreadsheet.find({
-        url: url
-      });
+    return googleSpreadsheet.load(function(result) {
       equals(result.data.length, 10);
+      return start();
+    });
+  });
+  return test("Load and parse long and complex text cell", function() {
+    var googleSpreadsheet;
+    expect(1);
+    localStorage.clear();
+    googleSpreadsheet = new GoogleSpreadsheet();
+    googleSpreadsheet.url("https://spreadsheets.google.com/pub?key=0Ago31JQPZxZrdGJSZTY2MHU4VlJ3RnNtdnNDVjRjLVE&hl=en&output=html");
+    googleSpreadsheet.type = "test";
+    googleSpreadsheet.save();
+    stop();
+    return googleSpreadsheet.load(function(result) {
+      console.log(result);
+      equals(result.data[0].match(/correctement/).length, 1);
       return start();
     });
   });

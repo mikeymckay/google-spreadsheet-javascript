@@ -12,14 +12,17 @@ class GoogleUrl
       try
         @key = @url.match(/key=(.*?)&/)[1]
       catch error
-        @key = @url.match(/list\/(.*?)\//)[1]
+        @key = @url.match(/(cells|list)\/(.*?)\//)[2]
     else
       @key = @sourceIdentifier
-    @jsonUrl = "http://spreadsheets.google.com/feeds/list/" + @key + "/od6/public/basic?alt=json-in-script"
+    @jsonCellsUrl = "http://spreadsheets.google.com/feeds/cells/" + @key + "/od6/public/basic?alt=json-in-script"
+    @jsonListUrl = "http://spreadsheets.google.com/feeds/list/" + @key + "/od6/public/basic?alt=json-in-script"
+    @jsonUrl = @jsonCellsUrl
 
 class GoogleSpreadsheet
   load: (callback) ->
-    url = @jsonUrl + "&callback=GoogleSpreadsheet.callback"
+    
+    url = @googleUrl.jsonCellsUrl + "&callback=GoogleSpreadsheet.callbackCells"
     $('body').append("<script src='" +url+ "'/>")
     jsonUrl = @jsonUrl
     safetyCounter = 0
@@ -38,7 +41,8 @@ class GoogleSpreadsheet
     throw "Invalid url, expecting object not string" if typeof(googleUrl) == "string"
     @url = googleUrl.url
     @key = googleUrl.key
-    @jsonUrl = "http://spreadsheets.google.com/feeds/list/" + @key + "/od6/public/basic?alt=json-in-script"
+    @jsonUrl = googleUrl.jsonUrl
+    @googleUrl = googleUrl
 
   save: ->
     localStorage["GoogleSpreadsheet."+@type] = JSON.stringify(this)
@@ -67,19 +71,16 @@ GoogleSpreadsheet.find = (params) ->
             return GoogleSpreadsheet.bless(itemObject)
   return null
 
-GoogleSpreadsheet.callback = (data) ->
-  result = []
-  for row in data.feed.entry
-    rowData = {}
-    for cell in row.content.$t.split(", ")
-      cell = cell.split(": ")
-      rowData[cell[0]]=cell[1]
-    result.push(rowData)
+GoogleSpreadsheet.callbackCells = (data) ->
   googleUrl = new GoogleUrl(data.feed.id.$t)
   googleSpreadsheet = GoogleSpreadsheet.find({jsonUrl:googleUrl.jsonUrl})
   if googleSpreadsheet == null
     googleSpreadsheet = new GoogleSpreadsheet()
     googleSpreadsheet.googleUrl(googleUrl)
-  googleSpreadsheet.data = result
+  googleSpreadsheet.data = (cell.content.$t for cell in data.feed.entry)
   googleSpreadsheet.save()
   googleSpreadsheet
+
+
+### TODO (Handle row based data)
+GoogleSpreadsheet.callbackList = (data) ->

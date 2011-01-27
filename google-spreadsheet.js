@@ -9,12 +9,14 @@ GoogleUrl = function() {
       try {
         this.key = this.url.match(/key=(.*?)&/)[1];
       } catch (error) {
-        this.key = this.url.match(/list\/(.*?)\//)[1];
+        this.key = this.url.match(/(cells|list)\/(.*?)\//)[2];
       }
     } else {
       this.key = this.sourceIdentifier;
     }
-    this.jsonUrl = "http://spreadsheets.google.com/feeds/list/" + this.key + "/od6/public/basic?alt=json-in-script";
+    this.jsonCellsUrl = "http://spreadsheets.google.com/feeds/cells/" + this.key + "/od6/public/basic?alt=json-in-script";
+    this.jsonListUrl = "http://spreadsheets.google.com/feeds/list/" + this.key + "/od6/public/basic?alt=json-in-script";
+    this.jsonUrl = this.jsonCellsUrl;
   }
   return GoogleUrl;
 }();
@@ -22,7 +24,7 @@ GoogleSpreadsheet = function() {
   function GoogleSpreadsheet() {}
   GoogleSpreadsheet.prototype.load = function(callback) {
     var intervalId, jsonUrl, safetyCounter, url, waitUntilLoaded;
-    url = this.jsonUrl + "&callback=GoogleSpreadsheet.callback";
+    url = this.googleUrl.jsonCellsUrl + "&callback=GoogleSpreadsheet.callbackCells";
     $('body').append("<script src='" + url + "'/>");
     jsonUrl = this.jsonUrl;
     safetyCounter = 0;
@@ -50,7 +52,8 @@ GoogleSpreadsheet = function() {
     }
     this.url = googleUrl.url;
     this.key = googleUrl.key;
-    return this.jsonUrl = "http://spreadsheets.google.com/feeds/list/" + this.key + "/od6/public/basic?alt=json-in-script";
+    this.jsonUrl = googleUrl.jsonUrl;
+    return this.googleUrl = googleUrl;
   };
   GoogleSpreadsheet.prototype.save = function() {
     return localStorage["GoogleSpreadsheet." + this.type] = JSON.stringify(this);
@@ -96,21 +99,8 @@ GoogleSpreadsheet.find = function(params) {
   }
   return null;
 };
-GoogleSpreadsheet.callback = function(data) {
-  var cell, googleSpreadsheet, googleUrl, result, row, rowData, _i, _j, _len, _len2, _ref, _ref2;
-  result = [];
-  _ref = data.feed.entry;
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    row = _ref[_i];
-    rowData = {};
-    _ref2 = row.content.$t.split(", ");
-    for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
-      cell = _ref2[_j];
-      cell = cell.split(": ");
-      rowData[cell[0]] = cell[1];
-    }
-    result.push(rowData);
-  }
+GoogleSpreadsheet.callbackCells = function(data) {
+  var cell, googleSpreadsheet, googleUrl, _i, _len, _ref, _results;
   googleUrl = new GoogleUrl(data.feed.id.$t);
   googleSpreadsheet = GoogleSpreadsheet.find({
     jsonUrl: googleUrl.jsonUrl
@@ -119,7 +109,17 @@ GoogleSpreadsheet.callback = function(data) {
     googleSpreadsheet = new GoogleSpreadsheet();
     googleSpreadsheet.googleUrl(googleUrl);
   }
-  googleSpreadsheet.data = result;
+  googleSpreadsheet.data = (function() {
+    _ref = data.feed.entry;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      cell = _ref[_i];
+      _results.push(cell.content.$t);
+    }
+    return _results;
+  }());
   googleSpreadsheet.save();
   return googleSpreadsheet;
 };
+/* TODO (Handle row based data)
+GoogleSpreadsheet.callbackList = (data) ->*/
