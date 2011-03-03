@@ -45,7 +45,7 @@ class GoogleSpreadsheet
     @googleUrl = googleUrl
 
   save: ->
-    localStorage["GoogleSpreadsheet."+@type] = JSON.stringify(this)
+    localStorage["GoogleSpreadsheet."+@key] = JSON.stringify(this)
 
 GoogleSpreadsheet.bless = (object) ->
   result = new GoogleSpreadsheet()

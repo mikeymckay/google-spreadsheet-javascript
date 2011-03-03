@@ -1,7 +1,7 @@
 /*
 Updated versions can be found at https://github.com/mikeymckay/google-spreadsheet-javascript
 */var GoogleSpreadsheet, GoogleUrl;
-GoogleUrl = function() {
+GoogleUrl = (function() {
   function GoogleUrl(sourceIdentifier) {
     this.sourceIdentifier = sourceIdentifier;
     if (this.sourceIdentifier.match(/http(s)*:/)) {
@@ -19,8 +19,8 @@ GoogleUrl = function() {
     this.jsonUrl = this.jsonCellsUrl;
   }
   return GoogleUrl;
-}();
-GoogleSpreadsheet = function() {
+})();
+GoogleSpreadsheet = (function() {
   function GoogleSpreadsheet() {}
   GoogleSpreadsheet.prototype.load = function(callback) {
     var intervalId, jsonUrl, safetyCounter, url, waitUntilLoaded;
@@ -59,7 +59,7 @@ GoogleSpreadsheet = function() {
     return localStorage["GoogleSpreadsheet." + this.type] = JSON.stringify(this);
   };
   return GoogleSpreadsheet;
-}();
+})();
 GoogleSpreadsheet.bless = function(object) {
   var key, result, value;
   result = new GoogleSpreadsheet();
@@ -100,7 +100,7 @@ GoogleSpreadsheet.find = function(params) {
   return null;
 };
 GoogleSpreadsheet.callbackCells = function(data) {
-  var cell, googleSpreadsheet, googleUrl, _i, _len, _ref, _results;
+  var cell, googleSpreadsheet, googleUrl;
   googleUrl = new GoogleUrl(data.feed.id.$t);
   googleSpreadsheet = GoogleSpreadsheet.find({
     jsonUrl: googleUrl.jsonUrl
@@ -110,6 +110,7 @@ GoogleSpreadsheet.callbackCells = function(data) {
     googleSpreadsheet.googleUrl(googleUrl);
   }
   googleSpreadsheet.data = (function() {
+    var _i, _len, _ref, _results;
     _ref = data.feed.entry;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -117,7 +118,7 @@ GoogleSpreadsheet.callbackCells = function(data) {
       _results.push(cell.content.$t);
     }
     return _results;
-  }());
+  })();
   googleSpreadsheet.save();
   return googleSpreadsheet;
 };
