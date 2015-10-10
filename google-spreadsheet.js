@@ -1,6 +1,6 @@
-/*
-Updated versions can be found at https://github.com/mikeymckay/google-spreadsheet-javascript
-*/var GoogleSpreadsheet, GoogleUrl;
+
+// Updated versions can be found at https://github.com/mikeymckay/google-spreadsheet-javascript
+var GoogleSpreadsheet, GoogleUrl;
 GoogleUrl = (function() {
   function GoogleUrl(sourceIdentifier) {
     this.sourceIdentifier = sourceIdentifier;
@@ -112,15 +112,19 @@ GoogleSpreadsheet.callbackCells = function(data) {
   googleSpreadsheet.data = (function() {
     var _i, _len, _ref, _results;
     _ref = data.feed.entry;
-    _results = [];
+    _results = {};
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       cell = _ref[_i];
-      _results.push(cell.content.$t);
+      col = cell.title.$t.charAt(0)
+      if (_results[col]) {
+        _results[col].push(cell.content.$t);
+      }else{
+        _results[col] = [cell.content.$t];
+      };
     }
     return _results;
   })();
   googleSpreadsheet.save();
   return googleSpreadsheet;
 };
-/* TODO (Handle row based data)
-GoogleSpreadsheet.callbackList = (data) ->*/
+// GoogleSpreadsheet.callbackList = (data) ->
