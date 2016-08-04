@@ -15,8 +15,8 @@ class GoogleUrl
         @key = @url.match(/(cells|list)\/(.*?)\//)[2]
     else
       @key = @sourceIdentifier
-    @jsonCellsUrl = "http://spreadsheets.google.com/feeds/cells/" + @key + "/od6/public/basic?alt=json-in-script"
-    @jsonListUrl = "http://spreadsheets.google.com/feeds/list/" + @key + "/od6/public/basic?alt=json-in-script"
+    @jsonCellsUrl = "https://spreadsheets.google.com/feeds/cells/" + @key + "/od6/public/basic?alt=json-in-script"
+    @jsonListUrl = "https://spreadsheets.google.com/feeds/list/" + @key + "/od6/public/basic?alt=json-in-script"
     @jsonUrl = @jsonCellsUrl
 
 class GoogleSpreadsheet
