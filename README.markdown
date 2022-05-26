@@ -4,7 +4,7 @@ Google-Spreadsheet-Javascript
 This is a simple jQuery plugin sort of thingy that allows JavaScript applications to pull data from Google spreadsheets.
 
 
-See [sample.html](https://github.com/mikeymckay/google-spreadsheet-javascript/blob/master/sample.html) for the most basic usage ([See it in action here](http://mikeymckay.github.com/google-spreadsheet-javascript/sample.html)).
+See [sample.html](https://github.com/mikeymckay/google-spreadsheet-javascript/blob/master/sample.html) for the most basic usage ([See it in action here](http://mikeymckay.github.io/google-spreadsheet-javascript/sample.html)).
 Look at the [QUnit tests](https://github.com/mikeymckay/google-spreadsheet-javascript/blob/master/tests) to see all of the things that the library can do.
 
 
