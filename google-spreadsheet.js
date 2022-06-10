@@ -122,5 +122,32 @@ GoogleSpreadsheet.callbackCells = function(data) {
   googleSpreadsheet.save();
   return googleSpreadsheet;
 };
-/* TODO (Handle row based data)
-GoogleSpreadsheet.callbackList = (data) ->*/
+GoogleSpreadsheet.callbackList = function(data) {
+  var cell, row, googleSpreadsheet, googleUrl;
+  googleUrl = new GoogleUrl(data.feed.id.$t);
+  googleSpreadsheet = GoogleSpreadsheet.find({
+    jsonUrl: googleUrl.jsonListUrl
+  });
+  if (googleSpreadsheet === null) {
+    googleSpreadsheet = new GoogleSpreadsheet();
+    googleSpreadsheet.googleUrl(googleUrl);
+  }
+  googleSpreadsheet.data = (function() {
+    var _i, _len, _ref, _results;
+    _ref = data.feed.entry;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      var obj = {};
+      row = _ref[_i].content.$t.split(', ');
+      for(var j=0; j < row.length; j++) {
+        cell = row[j];
+        var val = cell.split(': ');
+        obj[val[0]] =  val[1];  
+      }
+      _results.push(obj);
+    }
+    return _results;
+  })();
+  googleSpreadsheet.save();
+  return googleSpreadsheet;
+};
